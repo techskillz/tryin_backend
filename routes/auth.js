@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
     // }
 
-    const OriginalPassword = hashedpassword.toString(CryptoJS.enc.Utf8);
+
 
     res.status(401).json("wrong credentials");
 
