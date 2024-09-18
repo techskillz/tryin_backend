@@ -38,10 +38,13 @@ router.post("/login", async (req, res) => {
 
     const originalPassword = hashedpassword.toString(CryptoJS.enc.Utf8);
 
-    originalPassword !== req.body.password {
-        
-    }
-      res.status(401).json("wrong credentials");
+    // originalPassword !== req.body.password {
+
+    // }
+
+    const OriginalPassword = hashedpassword.toString(CryptoJS.enc.Utf8);
+
+    res.status(401).json("wrong credentials");
 
     res.status(200).json(user);
   } catch (error) {
