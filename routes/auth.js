@@ -3,6 +3,8 @@ const router = express.Router();
 const user = require("../models/User");
 const User = require("../models/User");
 const CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("../middleware/verifyToken");
 
 router.post("/register", async (req, res) => {
   const newUser = new User({
@@ -38,14 +40,49 @@ router.post("/login", async (req, res) => {
 
     const originalPassword = hashedpassword.toString(CryptoJS.enc.Utf8);
 
-    originalPassword !== req.body.password {
-        
-    }
+    originalPassword !== req.body.password &&
       res.status(401).json("wrong credentials");
 
-    res.status(200).json(user);
+    const accesstoken = jwt.sign(
+      {
+        id: user._id,
+        isadmin: user.isAdmin,
+      },
+      process.env.JWT_SEC,
+      { expiresIn: "3d" }
+    );
+
+    const { password, ...others } = user._doc;
+
+    res.status(200).json(others);
   } catch (error) {
     res.status(500).json(error);
   }
 });
+router.get("/verify", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const { password, ...userData } = user._doc;
+
+    // You might want to generate a new token here to extend the session
+    const newToken = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SEC,
+      { expiresIn: "3d" }
+    );
+
+    res.status(200).json({
+      user: userData,
+      accessToken: newToken,
+    });
+  } catch (error) {
+    console.error("Error in /verify endpoint:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
