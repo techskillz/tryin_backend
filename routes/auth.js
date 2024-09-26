@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const user = require("../models/User");
 const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
@@ -57,30 +56,32 @@ router.post("/login", async (req, res) => {
     res.status(500).json(error);
   }
 });
-router.get("/verify", verifyToken, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
 
-    const { password, ...userData } = user._doc;
+// router.get("/verify", verifyToken, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user.id);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    // You might want to generate a new token here to extend the session
-    const newToken = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SEC,
-      { expiresIn: "3d" }
-    );
+//     const { password, ...userData } = user._doc;
 
-    res.status(200).json({
-      user: userData,
-      accessToken: newToken,
-    });
-  } catch (error) {
-    console.error("Error in /verify endpoint:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+//     const newToken = jwt.sign(
+//       { id: user._id, isAdmin: user.isAdmin },
+//       process.env.JWT_SEC,
+//       { expiresIn: "3d" }
+//     );
+
+//     res.status(200).json({
+//       user: userData,
+//       accessToken: newToken,
+//     });
+//   } catch (error) {
+//     console.error("Error in /verify endpoint:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+// verify token is not suppose to be in this code - you've not done what you should do before using the verify token endpoint check the repo in class
 
 module.exports = router;
