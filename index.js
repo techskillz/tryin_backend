@@ -20,11 +20,14 @@ app.get("/api/test", () => {
   console.log("test route is workin");
 });
 
+const PORT = process.env.PORT;
+
 // to listen to the app
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
   console.log("Server is running successfully");
 });
 
+console.log(PORT);
 app.use(express.json());
 app.use("/api/users", userRoute);
 app.use("/api/auth", authRoute);
